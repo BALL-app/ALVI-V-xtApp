@@ -1,0 +1,2059 @@
+<!doctype html>
+<html lang="sv" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ALVI Växt</title>
+  <meta name="theme-color" content="#1b6bff">
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    :root{
+      --bg:#0b0c10; --panel:#121522; --panel2:#0f1220;
+      --border:#242a40; --border2:#2b3350;
+      --text:#eaf0ff; --muted:rgba(234,240,255,.72);
+      --accent:#1b6bff; --danger:#ff3b58;
+      --ok:rgba(0,200,140,.14); --okb:rgba(0,200,140,.35);
+      --soon:rgba(255,193,7,.14); --soonb:rgba(255,193,7,.35);
+      --due:rgba(255,59,88,.14); --dueb:rgba(255,59,88,.35);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    [data-theme="light"]{
+      --bg:#f7f8fb; --panel:#ffffff; --panel2:#f3f5fb;
+      --border:#e2e6f3; --border2:#d3d9ef;
+      --text:#101426; --muted:rgba(16,20,38,.7);
+      --accent:#1b6bff; --danger:#e53b54;
+      --ok:rgba(0,160,110,.12); --okb:rgba(0,160,110,.35);
+      --soon:rgba(230,170,0,.12); --soonb:rgba(230,170,0,.35);
+      --due:rgba(220,50,60,.12); --dueb:rgba(220,50,60,.35);
+    }
+
+    body{ margin:0; background:var(--bg); color:var(--text); }
+    .wrap{ padding:0 16px 18px; max-width:1040px; margin:0 auto; }
+    header{ position:sticky; top:0; z-index:10; background:linear-gradient(var(--bg) 85%, rgba(0,0,0,0)); }
+    .topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 16px 10px; }
+    h1{ margin:0; font-size:20px; letter-spacing:.2px; }
+    .iconBtn{
+      border:1px solid var(--border2); background:var(--panel2); color:var(--text);
+      border-radius:12px; padding:10px 12px; cursor:pointer; font-weight:900;
+    }
+
+    .tabs{ display:flex; gap:8px; padding:0 16px 12px; flex-wrap:wrap; }
+    .tab{
+      border:1px solid var(--border2); background:transparent; color:var(--text);
+      border-radius:999px; padding:9px 12px; cursor:pointer; font-weight:900;
+      opacity:.9;
+    }
+    .tab[aria-selected="true"]{ background:var(--panel2); border-color:var(--border2); opacity:1; }
+
+    .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:12px; box-shadow:0 10px 22px rgba(0,0,0,.18); }
+    [data-theme="light"] .card{ box-shadow:0 10px 22px rgba(20,30,60,.08); }
+
+    input, button, select, textarea{
+      background:var(--panel2); color:var(--text); border:1px solid var(--border2);
+      border-radius:14px; padding:10px 11px; font-size:14px;
+    }
+    textarea{ resize:vertical; min-height:44px; }
+    button{ cursor:pointer; }
+    button.primary{ background:var(--accent); border-color:var(--accent); }
+    button.ghost{ background:transparent; }
+    button.danger{ background:var(--danger); border-color:var(--danger); }
+    button.small{ padding:8px 10px; font-size:13px; border-radius:12px; }
+    button:disabled{ opacity:.45; cursor:not-allowed; }
+
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .row > *{ flex:1; }
+    .row .tight{ flex:0 0 auto; }
+
+    .hint{ font-size:12px; color:var(--muted); }
+    .muted{ color:var(--muted); }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--border2); background:var(--panel2);
+      font-size:13px; font-weight:850;
+    }
+
+    /* Växtkort – “lugn” version */
+    .list{ display:grid; gap:10px; }
+    .plant{
+      display:grid; gap:10px; grid-template-columns:74px 1fr auto;
+      align-items:center;
+      padding:12px; border-radius:16px;
+      border:1px solid var(--border); background:var(--panel2);
+    }
+    @media (max-width:820px){ .plant{ grid-template-columns:74px 1fr; } }
+    .thumb{ width:74px; height:74px; border-radius:14px; overflow:hidden; border:1px solid var(--border); background:var(--bg); display:grid; place-items:center; }
+    .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .thumb span{ font-size:12px; color:var(--muted); padding:0 6px; text-align:center; }
+
+    .titleRow{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .name{ font-weight:950; font-size:16px; }
+    .meta{ font-size:13px; color:var(--muted); line-height:1.25rem; }
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px; font-size:12px; font-weight:950;
+      border:1px solid transparent;
+    }
+    .due{ background:var(--due); border-color:var(--dueb); }
+    .soon{ background:var(--soon); border-color:var(--soonb); }
+    .ok{ background:var(--ok); border-color:var(--okb); }
+
+    .actions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; align-items:center; }
+    .star{
+      width:40px; height:40px; border-radius:12px; display:grid; place-items:center;
+      border:1px solid var(--border2); background:transparent; font-size:18px;
+    }
+    .star.on{ background:rgba(255,215,0,.14); border-color:rgba(255,215,0,.35); }
+
+    .details{ grid-column:1 / -1; border-top:1px solid var(--border); padding-top:10px; display:none; }
+    .plant.expanded .details{ display:block; }
+    .details .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width:820px){ .details .grid2{ grid-template-columns:1fr; } }
+    .kv{ font-size:13px; color:var(--muted); }
+    .kv b{ color:var(--text); }
+
+    /* Dashboard */
+    .sectionTitle{ font-weight:950; margin:2px 0 10px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .miniRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:flex-start; }
+    .miniCard{
+      border:1px solid var(--border); background:var(--panel2);
+      border-radius:16px; padding:12px; flex:1; min-width:260px;
+    }
+    .hScroll{ display:flex; gap:10px; overflow:auto; padding-bottom:4px; }
+    .chipCard{
+      min-width:220px; border:1px solid var(--border); background:var(--panel2);
+      border-radius:16px; padding:10px; display:flex; gap:10px; align-items:center;
+    }
+    .chipCard .t{ font-weight:950; }
+    .chipCard .s{ font-size:12px; color:var(--muted); }
+
+    /* Modal (redigera) */
+    #editModal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:9999; padding:16px; }
+    #editModal .modalBox{ max-width:860px; margin:0 auto; background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:0 18px 48px rgba(0,0,0,.5); overflow:hidden; }
+    #editModal .modalHead{ display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--border); }
+    #editModal .modalBody{ padding:14px; display:grid; gap:10px; }
+    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width:900px){ .grid2{ grid-template-columns:1fr; } }
+
+    footer{ padding:14px 16px 22px; color:var(--muted); font-size:12px; }
+  
+  /* Scope (Hem/Rum) – renare layout på mobil */
+  .scopeGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; align-items:end; }
+  .scopeItem select{ width:100%; }
+  .scopeBtns{ grid-column:1 / -1; display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+  .scopeBtns:empty{display:none;}
+  @media (max-width:520px){
+    .scopeGrid{ grid-template-columns: 1fr; }
+    .scopeBtns{ justify-content:stretch; }
+    .scopeBtns button{ flex:1; }
+  }
+
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar wrap">
+    <h1>🌿 ALVI Växt</h1>
+    <button class="iconBtn" id="themeBtn" type="button" title="Växla tema">🌙</button>
+  </div>
+  <div class="tabs wrap" role="tablist" aria-label="Vyer">
+    <button class="tab" id="tabToday" role="tab" aria-selected="true" type="button">Idag</button>
+    <button class="tab" id="tabAll" role="tab" aria-selected="false" type="button">Alla växter</button>
+    <button class="tab" id="tabAdd" role="tab" aria-selected="false" type="button">Lägg till</button>
+    <button class="tab" id="tabMore" role="tab" aria-selected="false" type="button">Mer</button>
+  </div>
+</header>
+
+<main class="wrap" style="padding-top:8px; display:grid; gap:12px;">
+  
+
+  <section class="card" id="viewToday">
+    <div class="sectionTitle">
+      <span>🌿 Mina växter</span>
+      <button class="ghost tight small" id="refreshBtn" type="button">Uppdatera</button>
+    </div>
+<div class="card" style="margin:10px 0; padding:12px;">
+<div class="scopeGrid">
+      <label class="scopeItem">Hem
+        <select id="homeFilter"></select>
+      </label>
+      <label class="scopeItem">Rum
+        <select id="roomFilter"></select>
+      </label>
+      <div class="scopeBtns">
+        </div>
+    </div>
+    <div class="hint" style="margin-top:6px;">Tips: välj hem och rum här för att filtrera listan. Byt här om du vattnar någon annans växter.</div>
+  </div>
+
+    <div class="miniRow">
+      <div class="miniCard">
+        <div class="sectionTitle" style="margin:0 0 6px;">
+          <span>💧 Behöver idag</span>
+          <span class="muted" id="todayCount">0</span>
+        </div>
+        <div class="list" id="todayList"></div>
+      </div>
+      <div class="miniCard">
+        <div class="sectionTitle" style="margin:0 0 6px;">
+          <span>⏳ Snart</span>
+          <span class="muted" id="soonCount">0</span>
+        </div>
+        <div class="list" id="soonList"></div>
+      </div>
+    </div>
+
+    <div style="height:10px;"></div>
+
+    <div class="sectionTitle">
+      <span>⭐ Favoriter & senast öppnade</span>
+      <button class="ghost tight small" id="goAllBtn" type="button">Visa alla</button>
+    </div>
+    <div class="hint" style="margin:-6px 0 10px;">Tryck ⭐ på en växt så hamnar den här. “Senast öppnade” fylls automatiskt.</div>
+    <div class="hScroll" id="favRecentRow"></div>
+
+    <div style="height:10px;"></div>
+    <div class="card" id="backupDock" style="padding:10px; background:var(--panel2);">
+      <div class="sectionTitle" style="margin:0 0 8px;">
+        <span>🛟 Säkerhetskopia & delning</span>
+        <button class="ghost tight small" id="backupToggleBtn" type="button">Öppna</button>
+      </div>
+      <div id="backupPanel" style="display:none;">
+        <div class="hint" style="line-height:1.45;">
+          <b>Så funkar det:</b> Dina växter sparas normalt <b>lokalt på den här enheten</b>. Om du byter telefon eller om webbläsardata rensas kan data försvinna.
+          <br><br>
+          <b>Vad som sparas i en säkerhetskopia:</b> alla hem, rum, aktiva växter, arkiverade växter, foton, inköp/pris, anteckningar och senaste vattning.
+          <br><br>
+          <b>Tips:</b> Spara kopian i <b>Google Drive / OneDrive / Filer</b> – eller skicka den till någon via <b>WhatsApp</b> eller <b>SMS</b> så finns den på två ställen.
+          <br><br>
+          <b>Enskild växt:</b> Öppna en växt → <b>Visa mer</b> → tryck <b>Dela växt</b> för att exportera bara den växten.
+        </div>
+        <div style="height:10px;"></div>
+        <div class="row" style="align-items:center;">
+          <div class="pill" style="flex:2;">
+            <span>Status</span>
+            <span class="muted" id="backupStatus">—</span>
+          </div>
+          <button class="primary tight" id="backupNowBtn" type="button" style="white-space:nowrap;">Säkerhetskopiera nu</button>
+        </div>
+        <div class="hint" style="margin-top:8px;" id="backupHelpLine"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="card" id="viewAll" style="display:none;">
+    <div class="row" style="margin-bottom:10px;">
+      <select id="sort">
+        <option value="urgent">Sortera: Mest akut</option>
+        <option value="name">Sortera: Namn</option>
+        <option value="room">Sortera: Rum</option>
+        <option value="price">Sortera: Pris</option>
+        <option value="interval">Sortera: Intervall</option>
+      </select>
+      <select id="filter">
+        <option value="all">Visa: Alla</option>
+        <option value="due">Visa: Behöver idag</option>
+        <option value="soon">Visa: Snart (inom 2 dagar)</option>
+      </select>
+      <button class="ghost tight small" id="copyTodayBtn" type="button">Kopiera dagens lista</button>
+    </div>
+
+    <div class="muted" id="summary" style="margin:0 0 10px;"></div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section class="card" id="viewAdd" style="display:none;">
+    <div class="sectionTitle"><span>➕ Lägg till växt</span></div>
+
+    <div class="grid2">
+      <label>Växtnamn / smeknamn
+        <input id="name" placeholder="t.ex. Stor fredskalla / 'Dramaqueen'" />
+      </label>
+      <label>Hem
+        <select id="home"></select>
+      </label>
+    </div>
+
+    <div class="grid2">
+      <label>Rum
+        <select id="room"></select>
+      </label>
+      <label>Plats (fri text)
+        <input id="spot" placeholder="t.ex. fönsterbrädan, hyllan ovanför TV:n" />
+      </label>
+    </div>
+
+    <div class="grid2">
+      <label>Fönster / läge
+        <select id="window">
+          <option value="">Välj…</option>
+          <option>Vid fönster</option>
+          <option>Inne i rummet</option>
+          <option>Soligt fönster</option>
+          <option>Halvskugga</option>
+          <option>Skugga</option>
+        </select>
+      </label>
+      <label>Vattna var (dagar)
+        <input id="interval" type="number" min="1" step="1" value="2" />
+      </label>
+    </div>
+
+    <div class="grid2">
+      <label>Senast vattnad (valfritt)
+        <input id="last" type="date" />
+      </label>
+      <label>Inköpspris (kr)
+        <input id="priceSek" type="number" min="0" step="1" placeholder="t.ex. 100" />
+      </label>
+    </div>
+
+    <div class="grid2">
+      <label>Köpt på (butik)
+        <input id="boughtWhere" placeholder="t.ex. Blomsterlandet" />
+      </label>
+      <label>Köpt datum
+        <input id="boughtDate" type="date" />
+      </label>
+    </div>
+
+    <div class="grid2">
+      <div class="card" style="padding:10px; background:var(--panel2);">
+        <div style="font-weight:950; margin-bottom:6px;">📸 Foto</div>
+        <div class="row">
+          <button class="ghost tight small" id="takePhotoBtn" type="button">Ta foto</button>
+          <button class="ghost tight small" id="pickPhotoBtn" type="button">Välj bild</button>
+          <button class="danger tight small" id="clearPhotoBtn" type="button">Ta bort</button>
+        </div>
+        <input style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" id="photoCamera" type="file" accept="image/*" capture="environment" />
+        <input style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" id="photoLibrary" type="file" accept="image/*" />
+        <div style="height:10px;"></div>
+        <div class="row" style="align-items:center;">
+          <div id="miniPrev" style="width:54px; height:54px; border-radius:12px; overflow:hidden; border:1px solid var(--border); background:var(--bg); display:grid; place-items:center; flex:0 0 auto;">
+            <span class="muted" style="font-size:12px; padding:0 6px; text-align:center;">Inget foto</span>
+          </div>
+          <div class="hint">På mobil öppnar “Ta foto” oftast kameran direkt.</div>
+        </div>
+      </div>
+      <label>Notering / instruktion (valfritt)
+      
+      <textarea id="note" placeholder="t.ex. Vattna ordentligt… • vill stå ljust • torkar snabbt • osv."></textarea>
+    </label>
+
+    <div class="row">
+      <button class="primary tight" id="addBtn" type="button">Spara växt</button>
+      <button class="ghost tight" id="seedBtn" type="button">Fyll med exempel</button>
+    </div>
+    <div class="hint">Du kan exportera/dela senare under “Mer”.</div>
+  </section>
+
+  <section class="card" id="viewMore" style="display:none;">
+    <div class="sectionTitle"><span>⚙️ Mer</span></div>
+
+    <div class="grid2">
+      <div class="card" style="padding:10px; background:var(--panel2);">
+        <div style="font-weight:950; margin-bottom:8px;">📄 PDF (för valt hem)</div>
+        <div class="hint" style="margin-bottom:8px;">Bra när någon annan ska vattna. Sorteras per rum.</div>
+        <button class="ghost tight" id="pdfBtn" type="button">Skapa PDF</button>
+      </div>
+
+      <div class="card" style="padding:10px; background:var(--panel2);">
+        <div style="font-weight:950; margin-bottom:8px;">🔁 Delning</div>
+        <div class="row">
+          <button class="ghost tight" id="exportHomeBtn" type="button">Exportera hem</button>
+          <div class="pill" style="flex:1;">
+            <span>Importera hem</span>
+            <input id="importHome" type="file" accept="application/json,.json" style="width:100%;" />
+          </div>
+        </div>
+        <div style="height:10px;"></div>
+        <div class="row">
+          <button class="ghost tight" id="exportAllBtn" type="button">Exportera alla växter</button>
+          <div class="pill" style="flex:1;">
+            <span>Importera växt</span>
+            <input id="importTop" type="file" accept="application/json,.json" style="width:100%;" />
+          </div>
+          <button class="ghost tight small" id="migrateBtn" type="button">Uppdatera data</button>
+        </div>
+        <div class="hint" style="margin-top:8px;">Import av hem lägger till alla växter och rum. Import av växt lägger bara en växt.</div>
+      </div>
+    </div>
+
+    <div style="height:10px;"></div>
+    <div class="row">
+      <button class="ghost tight" id="clearBtn" type="button">Rensa allt på den här enheten</button>
+    </div>
+
+    <div style="height:10px;"></div>
+    <div class="card" style="padding:10px; background:var(--panel2);">
+      <div class="sectionTitle" style="margin:0 0 8px;">
+        <span>🪦 Arkiv (vissnade växter)</span>
+        <button class="ghost tight small" id="showArchiveBtn" type="button">Visa arkiv</button>
+      </div>
+      <div class="hint">Arkivera en växt när den vissnat. Den tas bort från listorna men finns kvar här som “växthistoria”.</div>
+      <div id="archivePanel" style="display:none; margin-top:10px;">
+        <div class="row" style="margin-bottom:8px;">
+          <select id="archiveSort">
+            <option value="date">Sortera: Senast arkiverad</option>
+            <option value="name">Sortera: Namn</option>
+            <option value="room">Sortera: Rum</option>
+          </select>
+          <button class="ghost tight small" id="exportArchiveHomeBtn" type="button">Exportera arkiv (hem)</button>
+        </div>
+        <div class="list" id="archiveList"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>
+    Tips: öppna filen på mobilen och “Lägg till på hemskärmen” för en app-känsla.
+  </footer>
+
+  <div id="editModal">
+    <div class="modalBox">
+      <div class="modalHead">
+        <div style="font-weight:950;">Redigera växt</div>
+        <button class="ghost small tight" id="editCloseBtn" type="button">Stäng</button>
+      </div>
+      <div class="modalBody">
+        <div class="grid2">
+          <label>Växtnamn <input id="e_name" /></label>
+          <label>Hem <select id="e_home"></select></label>
+        </div>
+        <div class="grid2">
+          <label>Rum <select id="e_room"></select></label>
+          <label>Plats <input id="e_spot" /></label>
+        </div>
+        <div class="grid2">
+          <label>Fönster/läge
+            <select id="e_window">
+              <option value="">Välj…</option>
+              <option>Vid fönster</option><option>Inne i rummet</option><option>Soligt fönster</option>
+              <option>Halvskugga</option><option>Skugga</option>
+            </select>
+          </label>
+          <label>Vattna var (dagar) <input id="e_interval" type="number" min="1" step="1" /></label>
+        </div>
+        <div class="grid2">
+          <label>Senast vattnad <input id="e_last" type="date" /></label>
+          <label>Inköpspris (kr) <input id="e_priceSek" type="number" min="0" step="1" /></label>
+        </div>
+        <div class="grid2">
+          <label>Köpt på <input id="e_boughtWhere" /></label>
+          <label>Köpt datum <input id="e_boughtDate" type="date" /></label>
+        </div>
+        <label>Notering / instruktion <textarea id="e_note"></textarea></label>
+        <div class="row">
+          <button class="primary tight" id="editSaveBtn" type="button">Spara ändringar</button>
+          <button class="ghost tight" id="editCancelBtn" type="button">Avbryt</button>
+          <div class="hint" style="flex:2;">Ändringar sparas direkt.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="backupModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:10000; padding:16px;">
+    <div class="card" style="max-width:720px; margin:0 auto; padding:0; overflow:hidden;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--border);">
+        <div style="font-weight:950;">Säkerhetskopia</div>
+        <button class="ghost small tight" id="backupCloseBtn" type="button">Stäng</button>
+      </div>
+      <div style="padding:14px; display:grid; gap:10px;">
+        <div id="backupModalText" class="muted" style="line-height:1.4;"></div>
+        <div class="row">
+          <button class="primary tight" id="backupModalOkBtn" type="button">Okej</button>
+          <button class="ghost tight" id="backupHowBtn" type="button">Hur sparar jag i Drive/OneDrive?</button>
+        </div>
+        <div id="backupHowText" class="hint" style="display:none; line-height:1.45;">
+          <b>Snabb guide (mobil):</b><br>
+          1) När du får upp delningsrutan: välj <b>Google Drive</b>, <b>OneDrive</b> eller <b>Filer</b>.<br>
+          2) Välj en mapp som du hittar igen (t.ex. “ALVI Växt”).<br>
+          3) Spara. Sen kan du importera filen på en annan telefon via “Mer → Importera”.<br>
+          <span class="muted">Tips:</span> Dela gärna filen till en familjemedlem också – då finns den på två ställen.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="archiveModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:10000; padding:16px;">
+    <div class="card" style="max-width:720px; margin:0 auto; padding:0; overflow:hidden;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--border);">
+        <div style="font-weight:950;">Arkivera växt</div>
+        <button class="ghost small tight" id="archiveCloseBtn" type="button">Stäng</button>
+      </div>
+      <div style="padding:14px; display:grid; gap:10px;">
+        <div class="hint">Växten tas bort från listor och hamnar i arkivet. Du kan återställa den senare.</div>
+        <label>Orsak (valfritt)
+          <select id="archiveReason">
+            <option value="">Välj…</option>
+            <option>Vissnad</option>
+            <option>Glömd vattning</option>
+            <option>För lite ljus</option>
+            <option>Skadedjur</option>
+            <option>Okänt</option>
+          </select>
+        </label>
+        <label>Notering / instruktion (valfritt)
+          <textarea id="archiveNote" placeholder="t.ex. vill inte ha den igen, eller ‘köp samma nästa vår’"></textarea>
+        </label>
+        <div class="row">
+          <button class="danger tight" id="archiveDoBtn" type="button">Arkivera</button>
+          <button class="ghost tight" id="archiveCancelBtn" type="button">Avbryt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="installModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:10000; padding:16px;">
+    <div class="card" style="max-width:720px; margin:0 auto; padding:0; overflow:hidden;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--border);">
+        <div style="font-weight:950;">Installera ALVI Växt</div>
+        <button class="ghost small tight" id="installCloseBtn" type="button">Inte nu</button>
+      </div>
+      <div style="padding:14px; display:grid; gap:10px; line-height:1.45;">
+        <div class="muted">
+          Vill du lägga till appen på hemskärmen? Då öppnas den i <b>helskärm</b> och känns mer som en riktig app.
+        </div>
+        <div class="hint" id="installHowText" style="display:none;"></div>
+        <div class="row">
+          <button class="primary tight" id="installDoBtn" type="button">Installera</button>
+          <button class="ghost tight" id="installLaterBtn" type="button">Inte nu</button>
+        </div>
+        <div class="hint">
+          Du kan alltid installera senare via webbläsarens meny: <b>“Lägg till på hemskärmen”</b>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  const STORAGE_KEY = "vattningskollen_v17_plants";
+  const ROOMS_KEY   = "vattningskollen_v17_roomsByHome";
+  const HOMES_KEY   = "vattningskollen_v17_homes";
+  const UI_KEY      = "alvi_vaxt_ui_v2";
+
+  let pendingPhotoDataUrl = "";
+
+  function todayISO() {
+    const d = new Date();
+    d.setHours(0,0,0,0);
+    return d.toISOString().slice(0,10);
+  }
+  function parseISO(s) {
+    if (!s) return null;
+    const d = new Date(s + "T00:00:00");
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function addDays(date, days) {
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
+    d.setHours(0,0,0,0);
+    return d;
+  }
+  function diffDays(a, b) {
+    const ms = (a.getTime() - b.getTime());
+    return Math.round(ms / (1000*60*60*24));
+  }
+
+  function uid() { return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+
+  function loadPlants() {
+    try {
+      const arr = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (!Array.isArray(arr)) return [];
+      let changed = false;
+
+      const migrated = arr.map((p) => {
+        if (!p || typeof p !== "object") return p;
+
+        p.home = (p.home || "Hemma").trim() || "Hemma";
+        p.room = (p.room || "").trim();
+        p.name = (p.name || "Namnlös växt").trim() || "Namnlös växt";
+
+        if (p.favorite == null) { p.favorite = false; changed = true; }
+        if (p.lastOpened == null) { p.lastOpened = 0; changed = true; }
+
+        if (p.archived == null) { p.archived = false; changed = true; }
+        if (p.archivedAt == null) { p.archivedAt = 0; changed = true; }
+        if (p.archivedReason == null) { p.archivedReason = ""; changed = true; }
+        if (p.archivedNote == null) { p.archivedNote = ""; changed = true; }
+        if (p.wasRoom == null) { p.wasRoom = ""; changed = true; }
+
+        const legacyBoughtWhere = p.boughtWhere ?? p.store ?? p.shop ?? p.purchaseWhere ?? p.bought_at;
+        const legacyBoughtDate  = p.boughtDate  ?? p.purchaseDate ?? p.bought_date ?? p.dateBought;
+        const legacyPrice       = (p.priceSek ?? p.price ?? p.cost ?? p.purchasePrice ?? p.priceSEK ?? p.price_kr);
+
+        if (p.boughtWhere == null && legacyBoughtWhere != null) { p.boughtWhere = String(legacyBoughtWhere); changed = true; }
+        if (p.boughtDate  == null && legacyBoughtDate  != null) { p.boughtDate  = String(legacyBoughtDate);  changed = true; }
+        if ((p.priceSek == null || p.priceSek === "") && legacyPrice != null && legacyPrice !== "") {
+          const n = Number(legacyPrice);
+          p.priceSek = Number.isFinite(n) ? n : String(legacyPrice);
+          changed = true;
+        }
+
+        if ((!p.boughtWhere || !p.boughtDate || p.priceSek === "" || p.priceSek == null) && typeof p.note === "string") {
+          const note = p.note;
+
+          const storeMatch = note.match(/inköpt[:\s]+(.+?)(?=(?:\s+|•+)(\d{6}|\d{4}-\d{2}-\d{2})\b|$)/i);
+          const dateMatch = note.match(/\b(\d{6}|\d{4}-\d{2}-\d{2})\b/);
+
+          const extractedStore = storeMatch && storeMatch[1] ? storeMatch[1].trim() : "";
+          const extractedDate  = dateMatch && dateMatch[1] ? dateMatch[1].trim() : "";
+
+          const currentStore = (p.boughtWhere || "").trim();
+          const looksBroken = currentStore.length > 0 && currentStore.length <= 2;
+
+          if ((!p.boughtWhere || looksBroken) && extractedStore && extractedStore.length >= 3) {
+            p.boughtWhere = extractedStore; changed = true;
+          }
+          if (!p.boughtDate && extractedDate) { p.boughtDate = extractedDate; changed = true; }
+
+          const mp = note.match(/inköpspris[:\s]+(\d+)/i) || note.match(/\bpris[:\s]+(\d+)\s*kr?\b/i);
+          if ((p.priceSek === "" || p.priceSek == null) && mp && mp[1]) {
+            p.priceSek = Number(mp[1]); changed = true;
+          }
+
+          if ((extractedStore || extractedDate) && /inköpt/i.test(note)) {
+            const cleaned = note.split(/\n+/).filter(line => !/^\s*inköpt/i.test(line.trim())).join("\n").trim();
+            if (cleaned !== note) { p.note = cleaned; changed = true; }
+          }
+        }
+
+        return p;
+      });
+
+      if (changed) localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
+    } catch {
+      return [];
+    }
+  }
+
+  function savePlants(plants, opts={}) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(plants));
+    // Räkna inte “tysta” uppdateringar (t.ex. senast öppnad)
+    if (!opts.silent) {
+      const ui = ensureBackupFields();
+      ui.changesSinceBackup = (ui.changesSinceBackup || 0) + 1;
+      saveUI(ui);
+      updateBackupStatus();
+    }
+  }
+
+  function loadHomes() { try { const a = JSON.parse(localStorage.getItem(HOMES_KEY) || "[]"); return Array.isArray(a) ? a : []; } catch { return []; } }
+  function saveHomes(h) { localStorage.setItem(HOMES_KEY, JSON.stringify(h)); }
+  function ensureHomeExists(name) {
+    const home = (name || "").trim() || "Hemma";
+    const homes = loadHomes();
+    if (!homes.includes(home)) homes.push(home);
+    if (!homes.includes("Hemma")) homes.push("Hemma");
+    saveHomes(homes);
+  }
+  function getHomes() {
+    const plants = loadPlants();
+    const set = new Set(loadHomes());
+    for (const p of plants) if (p.home) set.add(p.home);
+    set.add("Hemma");
+    return Array.from(set).sort((a,b)=>a.localeCompare(b,"sv"));
+  }
+
+  const DEFAULT_ROOMS = ["Vardagsrum","Kök","Sovrum","Badrum","Hall","Kontor","Balkong/uterum","Förråd","Annan"];
+  function loadRoomsByHome() { try { const raw = localStorage.getItem(ROOMS_KEY); const obj = raw ? JSON.parse(raw) : {}; return (obj && typeof obj === "object") ? obj : {}; } catch { return {}; } }
+  function saveRoomsByHome(m) { localStorage.setItem(ROOMS_KEY, JSON.stringify(m)); }
+  function getRoomsForHome(home) {
+    const map = loadRoomsByHome();
+    const arr = Array.isArray(map[home]) ? map[home] : [];
+    const set = new Set([...DEFAULT_ROOMS, ...arr].map(x => (x||"").trim()).filter(Boolean));
+    return Array.from(set).sort((a,b)=>a.localeCompare(b,"sv"));
+  }
+  function addRoomToHome(home, roomName) {
+    const h = (home || "").trim() || "Hemma";
+    ensureHomeExists(h);
+    const clean = (roomName || "").trim();
+    if (!clean) return;
+    const map = loadRoomsByHome();
+    const arr = Array.isArray(map[h]) ? map[h] : [];
+    if (!arr.includes(clean) && !DEFAULT_ROOMS.includes(clean)) arr.push(clean);
+    map[h] = arr;
+    saveRoomsByHome(map);
+  }
+
+  function statusFor(plant) {
+    const last = plant.last ? parseISO(plant.last) : null;
+    const interval = Number(plant.interval) || 1;
+    if (!last) return { tag: "due", label: "Behöver vatten", next: null, daysLeft: null };
+    const next = addDays(last, interval);
+    const daysLeft = diffDays(next, parseISO(todayISO()));
+    if (daysLeft <= 0) return { tag: "due", label: "Behöver idag", next, daysLeft };
+    if (daysLeft <= 2) return { tag: "soon", label: `Snart (${daysLeft} d)`, next, daysLeft };
+    return { tag: "ok", label: `OK (${daysLeft} d kvar)`, next, daysLeft };
+  }
+
+  function loadUI(){ try { return JSON.parse(localStorage.getItem(UI_KEY) || "{}") || {}; } catch { return {}; } }
+  function saveUI(obj){ localStorage.setItem(UI_KEY, JSON.stringify(obj)); }
+
+  function ensureBackupFields(){
+    const ui = loadUI();
+    if (ui.lastBackupAt == null) ui.lastBackupAt = 0;
+    if (ui.changesSinceBackup == null) ui.changesSinceBackup = 0;
+    saveUI(ui);
+    return ui;
+  }
+
+  function setTab(which){
+    const tabs = { today:["tabToday","viewToday"], all:["tabAll","viewAll"], add:["tabAdd","viewAdd"], more:["tabMore","viewMore"] };
+    for (const k of Object.keys(tabs)){
+      const [t,v] = tabs[k];
+      $(t).setAttribute("aria-selected", k===which ? "true":"false");
+      $(v).style.display = (k===which) ? "block" : "none";
+    }
+    const ui = loadUI(); ui.tab = which; saveUI(ui);
+    render();
+  }
+
+  function setTheme(theme){
+    document.documentElement.setAttribute("data-theme", theme);
+    const ui = loadUI(); ui.theme = theme; saveUI(ui);
+    $("themeBtn").textContent = theme === "light" ? "☀️" : "🌙";
+  }
+  function toggleTheme(){
+    const cur = document.documentElement.getAttribute("data-theme") || "light";
+    setTheme(cur === "dark" ? "light" : "dark");
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, s => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[s]));
+  }
+  function downloadText(filename, text, mime="application/json") {
+    const blob = new Blob([text], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+  async function fileToResizedDataURL(file, maxSide=900, quality=0.82) {
+    const dataURL = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Kunde inte läsa bilden."));
+      reader.readAsDataURL(file);
+    });
+    const img = await new Promise((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = () => reject(new Error("Kunde inte ladda bilden."));
+      i.src = dataURL;
+    });
+    const w = img.naturalWidth || img.width;
+    const h = img.naturalHeight || img.height;
+    const scale = Math.min(1, maxSide / Math.max(w, h));
+    const cw = Math.max(1, Math.round(w * scale));
+    const ch = Math.max(1, Math.round(h * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = cw; canvas.height = ch;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, cw, ch);
+    return canvas.toDataURL("image/jpeg", quality);
+  }
+  function setMiniPreview(dataUrl) {
+    const box = $("miniPrev");
+    box.innerHTML = "";
+    if (!dataUrl) {
+      const sp = document.createElement("span");
+      sp.className = "muted";
+      sp.style.fontSize = "12px";
+      sp.style.padding = "0 6px";
+      sp.style.textAlign = "center";
+      sp.textContent = "Inget foto";
+      box.appendChild(sp);
+      return;
+    }
+    const img = document.createElement("img");
+    img.alt = "Förhandsvisning";
+    img.src = dataUrl;
+    img.style.width="100%"; img.style.height="100%"; img.style.objectFit="cover"; img.style.display="block";
+    box.appendChild(img);
+  }
+
+  function renderHomeSelects() {
+    const homes = getHomes();
+    const hf = $("homeFilter");
+    const saved = localStorage.getItem("vk_current_home") || homes[0] || "Hemma";
+    hf.innerHTML = "";
+    homes.forEach(h => { const o=document.createElement("option"); o.value=h; o.textContent=h; hf.appendChild(o); });
+    hf.value = homes.includes(saved) ? saved : (homes[0] || "Hemma");
+
+    const hs = $("home");
+    hs.innerHTML = "";
+    homes.forEach(h => { const o=document.createElement("option"); o.value=h; o.textContent=h; hs.appendChild(o); });
+    hs.value = homes.includes(hf.value) ? hf.value : (homes[0] || "Hemma");
+  }
+
+  function renderRoomSelects() {
+    const plants = loadPlants();
+    const homeFilter = $("homeFilter").value || "Hemma";
+    const addHome = $("home").value || "Hemma";
+
+    const rf = $("roomFilter");
+    const roomsInScope = new Set();
+    const scoped = plants.filter(p => (p.home||"Hemma") === homeFilter);
+    for (const p of scoped) if (p.room) roomsInScope.add(p.room);
+    for (const r of getRoomsForHome(homeFilter)) roomsInScope.add(r);
+
+    const saved = localStorage.getItem("vk_current_room") || "Alla rum";
+    rf.innerHTML = "";
+    const o0 = document.createElement("option"); o0.value="Alla rum"; o0.textContent="Alla rum"; rf.appendChild(o0);
+    Array.from(roomsInScope).sort((a,b)=>a.localeCompare(b,"sv")).forEach(r => { const o=document.createElement("option"); o.value=r; o.textContent=r; rf.appendChild(o); });
+    rf.value = (rf.querySelector(`option[value="${CSS.escape(saved)}"]`) ? saved : "Alla rum");
+
+    const rsel = $("room");
+    const roomsForAdd = getRoomsForHome(addHome);
+    rsel.innerHTML = "";
+    roomsForAdd.forEach(r => { const o=document.createElement("option"); o.value=r; o.textContent=r; rsel.appendChild(o); });
+    if (!rsel.value) rsel.value = roomsForAdd[0] || "Vardagsrum";
+  }
+
+  function scopePlants(plants){
+    const home = $("homeFilter").value || "Hemma";
+    const room = $("roomFilter").value || "Alla rum";
+    let items = plants.filter(p => (p.home||"Hemma") === home && !p.archived);
+    if (room !== "Alla rum") items = items.filter(p => (p.room||"") === room);
+    return items;
+  }
+
+  function setLastOpened(id){
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) return;
+    p.lastOpened = Date.now();
+    savePlants(plants, {silent:true});
+  }
+
+  function toggleFavorite(id){
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) return;
+    p.favorite = !p.favorite;
+    savePlants(plants);
+    render();
+  }
+
+  function buildBuyLine(plant){
+    const parts = [];
+    const bw = (plant.boughtWhere || "").trim();
+    const bd = (plant.boughtDate || "").trim();
+    const hasPrice = !(plant.priceSek === "" || plant.priceSek == null || (typeof plant.priceSek === "number" && isNaN(plant.priceSek)));
+    if (bw) parts.push(`Inköpt: ${bw}`);
+    if (bd) parts.push(`Datum: ${bd}`);
+    if (hasPrice) parts.push(`Inköpspris: ${plant.priceSek} kr`);
+    return parts.join(" • ");
+  }
+
+  function makePlantCard(plant){
+    const s = statusFor(plant);
+    const nextTxt = s.next ? s.next.toISOString().slice(0,10) : "—";
+
+    const el = document.createElement("div");
+    el.className = "plant";
+    el.dataset.id = plant.id;
+
+    const thumb = document.createElement("div");
+    thumb.className = "thumb";
+    if (plant.photoDataUrl) {
+      const img = document.createElement("img");
+      img.alt = plant.name || "Växtfoto";
+      img.src = plant.photoDataUrl;
+      thumb.appendChild(img);
+    } else {
+      const sp = document.createElement("span");
+      sp.textContent = "Inget foto";
+      thumb.appendChild(sp);
+    }
+
+    const main = document.createElement("div");
+    main.innerHTML = `
+      <div class="titleRow">
+        <div class="name">${escapeHtml(plant.name || "Namnlös växt")}</div>
+        <span class="badge ${s.tag}">${s.tag==="due"?"💧":s.tag==="soon"?"⏳":"✅"} ${escapeHtml(s.label)}</span>
+      </div>
+      <div class="meta">Nästa: <b style="color:var(--text);">${escapeHtml(nextTxt)}</b> • Rum: <b style="color:var(--text);">${escapeHtml(plant.room || "—")}</b></div>
+    `;
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const star = document.createElement("button");
+    star.className = "star" + (plant.favorite ? " on" : "");
+    star.type="button";
+    star.title = plant.favorite ? "Ta bort favorit" : "Lägg till favorit";
+    star.textContent = plant.favorite ? "⭐" : "☆";
+    star.onclick = (e)=>{ e.stopPropagation(); toggleFavorite(plant.id); };
+
+    const waterBtn = document.createElement("button");
+    waterBtn.className = "primary small";
+    waterBtn.type="button";
+    waterBtn.textContent = "Vattnad idag";
+    waterBtn.onclick = (e)=>{ e.stopPropagation(); confirmAndMarkWatered(plant.id); };
+
+    const moreBtn = document.createElement("button");
+    moreBtn.className = "ghost small";
+    moreBtn.type="button";
+    moreBtn.textContent = "Visa mer";
+    moreBtn.onclick = (e)=>{
+      e.stopPropagation();
+      el.classList.toggle("expanded");
+      moreBtn.textContent = el.classList.contains("expanded") ? "Visa mindre" : "Visa mer";
+      setLastOpened(plant.id);
+      renderFavRecent();
+    };
+
+    actions.append(star, waterBtn, moreBtn);
+
+    const details = document.createElement("div");
+    details.className = "details";
+
+    const buyLine = buildBuyLine(plant);
+    const instr = (plant.instruction || "").trim();
+    const note = (plant.note || "").trim();
+
+    details.innerHTML = `
+      <div class="grid2">
+        <div class="kv"><b>Senast:</b> ${escapeHtml(plant.last || "okänt")}</div>
+        <div class="kv"><b>Intervall:</b> var ${Number(plant.interval)||1} dag</div>
+      </div>
+      ${buyLine ? `<div class="kv" style="margin-top:6px;"><b>🛒</b> ${escapeHtml(buyLine)}</div>` : ``}
+      ${instr ? `<div class="kv" style="margin-top:6px;"><b>👩‍🦳 Instruktion:</b><br>${escapeHtml(instr)}</div>` : ``}
+      ${note ? `<div class="kv" style="margin-top:6px;"><b>📝 Anteckning:</b><br>${escapeHtml(note)}</div>` : ``}
+      <div class="row" style="margin-top:10px;">
+        <button class="ghost tight small" data-act="undo">Ångra vattning</button>
+        <button class="ghost tight small" data-act="export">Dela växt</button>
+        <button class="ghost tight small" data-act="archive">Arkivera</button>
+        <button class="ghost tight small" data-act="edit">Redigera</button>
+        <button class="danger tight small" data-act="delete">Ta bort</button>
+      </div>
+    `;
+
+    details.querySelector('[data-act="undo"]').onclick = (e)=>{ e.stopPropagation(); confirmAndUndoWatered(plant.id); };
+    details.querySelector('[data-act="export"]').onclick = (e)=>{ e.stopPropagation(); exportOne(plant.id); };
+    details.querySelector('[data-act="archive"]').onclick = (e)=>{ e.stopPropagation(); openArchiveModal(plant.id); };
+    details.querySelector('[data-act="edit"]').onclick = (e)=>{ e.stopPropagation(); editPlant(plant.id); };
+    details.querySelector('[data-act="delete"]').onclick = (e)=>{ e.stopPropagation(); removePlant(plant.id); };
+
+    const undoBtn = details.querySelector('[data-act="undo"]');
+    undoBtn.disabled = !(plant._undoLast !== undefined);
+
+    el.append(thumb, main, actions, details);
+    return el;
+  }
+
+  function render() {
+    renderHomeSelects();
+    renderRoomSelects();
+
+    const plantsAll = loadPlants();
+    const scoped = scopePlants(plantsAll).map(p => ({...p, _s: statusFor(p)}));
+
+    const sort = $("sort").value;
+    const filter = $("filter").value;
+
+    let items = scoped.slice();
+
+    if (filter !== "all") {
+      if (filter === "due") items = items.filter(x => x._s.tag === "due");
+      if (filter === "soon") items = items.filter(x => x._s.tag === "soon");
+    }
+
+    if (sort === "name") items.sort((a,b)=>(a.name||"").localeCompare(b.name||"","sv"));
+    if (sort === "room") items.sort((a,b)=>(a.room||"").localeCompare(b.room||"","sv"));
+    if (sort === "price") items.sort((a,b)=>(Number(a.priceSek)||0)-(Number(b.priceSek)||0));
+    if (sort === "interval") items.sort((a,b)=>(Number(a.interval)||0)-(Number(b.interval)||0));
+    if (sort === "urgent") {
+      const rank = { due:0, soon:1, ok:2 };
+      items.sort((a,b)=>(rank[a._s.tag]-rank[b._s.tag]) || ((a._s.daysLeft ?? 999)-(b._s.daysLeft ?? 999)));
+    }
+
+    const dueCount = scoped.filter(p => p._s.tag === "due").length;
+    const soonCount = scoped.filter(p => p._s.tag === "soon").length;
+    $("summary").textContent = `Växter: ${scoped.length} • Behöver idag: ${dueCount} • Snart: ${soonCount}`;
+
+    const list = $("list");
+    list.innerHTML = "";
+    if (items.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "muted";
+      empty.style.padding = "6px 2px";
+      empty.textContent = "Inga växter här ännu.";
+      list.appendChild(empty);
+    } else {
+      for (const p of items) list.appendChild(makePlantCard(p));
+    }
+
+    renderDashboard(scoped);
+    renderFavRecent();
+    updateBackupStatus();
+    renderArchive();
+
+    $("home").value = $("homeFilter").value || "Hemma";
+    renderRoomSelects();
+  }
+
+  function renderDashboard(scoped){
+    const due = scoped.filter(p => p._s.tag === "due").slice().sort((a,b)=>(a._s.daysLeft??0)-(b._s.daysLeft??0));
+    const soon = scoped.filter(p => p._s.tag === "soon").slice().sort((a,b)=>(a._s.daysLeft??0)-(b._s.daysLeft??0));
+
+    $("todayCount").textContent = due.length;
+    $("soonCount").textContent = soon.length;
+
+    const todayList = $("todayList");
+    const soonList = $("soonList");
+    todayList.innerHTML = "";
+    soonList.innerHTML = "";
+
+    const maxShow = 5;
+    const renderMini = (arr, root) => {
+      if (arr.length === 0) {
+        const d = document.createElement("div");
+        d.className = "muted";
+        d.textContent = "Inget just nu ✅";
+        root.appendChild(d);
+        return;
+      }
+      arr.slice(0,maxShow).forEach(p => root.appendChild(makePlantCard(p)));
+    };
+
+    renderMini(due, todayList);
+    renderMini(soon, soonList);
+  }
+
+  function renderFavRecent(){
+    const plantsAll = scopePlants(loadPlants());
+    const favs = plantsAll.filter(p => p.favorite);
+    favs.sort((a,b)=>(b.lastOpened||0)-(a.lastOpened||0));
+
+    const recent = plantsAll.filter(p => !p.favorite && (p.lastOpened||0) > 0);
+    recent.sort((a,b)=>(b.lastOpened||0)-(a.lastOpened||0));
+
+    const row = $("favRecentRow");
+    row.innerHTML = "";
+
+    const take = (arr, n) => arr.slice(0,n);
+
+    const pushChip = (p, label) => {
+      const s = statusFor(p);
+      const nextTxt = s.next ? s.next.toISOString().slice(0,10) : "—";
+      const div = document.createElement("div");
+      div.className = "chipCard";
+      div.innerHTML = `
+        <div style="width:44px; height:44px; border-radius:12px; overflow:hidden; border:1px solid var(--border); background:var(--bg); display:grid; place-items:center; flex:0 0 auto;">
+          ${p.photoDataUrl ? `<img src="${p.photoDataUrl}" style="width:100%; height:100%; object-fit:cover; display:block;" />` : `<span class="muted" style="font-size:11px;">Foto</span>`}
+        </div>
+        <div style="min-width:0;">
+          <div class="t" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.name||"Växt")}</div>
+          <div class="s">${escapeHtml(label)} • Nästa: ${escapeHtml(nextTxt)}</div>
+        </div>
+      `;
+      div.onclick = () => { setTab("all"); setTimeout(()=>{ 
+        setLastOpened(p.id);
+        const card = document.querySelector(`.plant[data-id="${CSS.escape(p.id)}"]`);
+        if (card) {
+          card.classList.add("expanded");
+          const btn = card.querySelector(".actions button.ghost.small");
+          if (btn) btn.textContent = "Visa mindre";
+          card.scrollIntoView({behavior:"smooth", block:"center"});
+        }
+        renderFavRecent();
+      }, 0); };
+      row.appendChild(div);
+    };
+
+    const favShow = take(favs, 6);
+    const recShow = take(recent, 6);
+
+    if (favShow.length === 0 && recShow.length === 0) {
+      const t = document.createElement("div");
+      t.className = "muted";
+      t.textContent = "Tips: tryck ☆ på en växt för att lägga till favorit. “Senast öppnade” fylls när du öppnar detaljer.";
+      row.appendChild(t);
+      return;
+    }
+
+    favShow.forEach(p => pushChip(p, "Favorit"));
+    recShow.forEach(p => pushChip(p, "Senast"));
+  }
+
+  function confirmAndMarkWatered(id) {
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) return;
+    const name = p.name || "växten";
+    const ok = confirm(`Markera "${name}" som vattnad idag (${todayISO()})?`);
+    if (!ok) return;
+    p._undoLast = (p.last ?? "");
+    p.last = todayISO();
+    savePlants(plants);
+    render();
+  }
+
+  function confirmAndUndoWatered(id) {
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) return;
+    const name = p.name || "växten";
+    const ok = confirm(`Ångra vattning för "${name}"?`);
+    if (!ok) return;
+    p.last = (p._undoLast === "" ? "" : p._undoLast);
+    delete p._undoLast;
+    savePlants(plants);
+    render();
+  }
+
+  function exportOne(id) {
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) return;
+
+    const safeName = (p.name || "vaxt").toLowerCase()
+      .replace(/å/g,"a").replace(/ä/g,"a").replace(/ö/g,"o")
+      .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")
+      .slice(0, 40) || "vaxt";
+
+    const payload = { schema: "vattningskollen.plant.v1", exportedAt: new Date().toISOString(), plant: p };
+    downloadText(`vaxt-${safeName}.json`, JSON.stringify(payload, null, 2));
+  }
+
+  function exportAllPlants() {
+    const plants = loadPlants();
+    const payload = { schema: "vattningskollen.plants.v1", exportedAt: new Date().toISOString(), plants };
+    downloadText(`vattningskollen-alla-vaxter.json`, JSON.stringify(payload, null, 2));
+  }
+
+  function validatePlantObject(p) {
+    if (!p || typeof p !== "object") return null;
+    const id = typeof p.id === "string" && p.id.length ? p.id : uid();
+    const name = typeof p.name === "string" ? p.name : "Namnlös växt";
+    const interval = Math.max(1, Number(p.interval) || 2);
+    const last = typeof p.last === "string" ? p.last : "";
+    const note = typeof p.note === "string" ? p.note : "";
+    const home = typeof p.home === "string" && p.home.trim() ? p.home.trim() : "Hemma";
+    const room = typeof p.room === "string" ? p.room : "";
+    const spot = typeof p.spot === "string" ? p.spot : "";
+    const window = typeof p.window === "string" ? p.window : "";
+    const instruction = typeof p.instruction === "string" ? p.instruction : "";
+    const boughtWhere = typeof p.boughtWhere === "string" ? p.boughtWhere : "";
+    const boughtDate = typeof p.boughtDate === "string" ? p.boughtDate : "";
+    const priceSek = (p.priceSek === "" || p.priceSek == null) ? "" : Math.max(0, Number(p.priceSek) || 0);
+    const photoDataUrl = (typeof p.photoDataUrl === "string" && p.photoDataUrl.startsWith("data:image/")) ? p.photoDataUrl : "";
+    const favorite = !!p.favorite;
+    const lastOpened = Number(p.lastOpened) || 0;
+    const archived = !!p.archived;
+    const archivedAt = Number(p.archivedAt) || 0;
+    const archivedReason = typeof p.archivedReason === "string" ? p.archivedReason : "";
+    const archivedNote = typeof p.archivedNote === "string" ? p.archivedNote : "";
+    const wasRoom = typeof p.wasRoom === "string" ? p.wasRoom : "";
+    const _undoLast = (p._undoLast === undefined) ? undefined : (typeof p._undoLast === "string" ? p._undoLast : "");
+    const out = { id, name, interval, last, note, home, room, spot, window, instruction, boughtWhere, boughtDate, priceSek, photoDataUrl, favorite, lastOpened, archived, archivedAt, archivedReason, archivedNote, wasRoom };
+    if (_undoLast !== undefined) out._undoLast = _undoLast;
+    return out;
+  }
+
+  async function importPlantFromFile(file) {
+    const text = await file.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch { alert("Det där var inte giltig JSON."); return; }
+
+    const plants = loadPlants();
+
+    const addPlant = (plantObj) => {
+      const p = validatePlantObject(plantObj);
+      if (!p) return 0;
+      ensureHomeExists(p.home || "Hemma");
+      if (p.room) addRoomToHome(p.home || "Hemma", p.room);
+      const idx = plants.findIndex(x => x.id === p.id);
+      if (idx >= 0) {
+        const existing = plants[idx];
+        const nameA = existing.name || "växten";
+        const nameB = p.name || "växten";
+        const msg = `Det finns redan en växt med samma ID i appen (“${nameA}”).
+
+Vill du skriva över med filens data (“${nameB}”)?
+
+OK = Skriv över
+Avbryt = Lägg till som kopia`;
+        if (confirm(msg)) {
+          plants[idx] = p;
+        } else {
+          p.id = uid();
+          plants.push(p);
+        }
+      } else {
+        plants.push(p);
+      }
+      return 1;
+    };
+
+    if (data && data.plant) {
+      const n = addPlant(data.plant);
+      savePlants(plants);
+      render();
+      if (n) alert("Importerade 1 växt ✅");
+      else alert("Kunde inte läsa växten i filen.");
+      return;
+    }
+
+    if (data && Array.isArray(data.plants)) {
+      let n = 0;
+      for (const p of data.plants) n += addPlant(p);
+      savePlants(plants);
+      render();
+      alert(`Importerade ${n} växt(er) ✅`);
+      return;
+    }
+
+    alert("Filen såg inte ut som en export från ALVI Växt.");
+  }
+
+  function exportCurrentHome() {
+    const home = $("homeFilter").value || "Hemma";
+    const plants = loadPlants().filter(p => (p.home || "Hemma") === home);
+    const rooms = getRoomsForHome(home);
+    const payload = {
+      schema: "vattningskollen.home.v1",
+      exportedAt: new Date().toISOString(),
+      home: { name: home, rooms },
+      plants
+    };
+    const safe = home.toLowerCase()
+      .replace(/å/g,"a").replace(/ä/g,"a").replace(/ö/g,"o")
+      .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")
+      .slice(0, 40) || "hem";
+    downloadText(`hem-${safe}.json`, JSON.stringify(payload, null, 2));
+  }
+
+  function uniqueHomeName(base) {
+    const homes = getHomes();
+    if (!homes.includes(base)) return base;
+    let i = 2;
+    while (homes.includes(`${base} (${i})`)) i++;
+    return `${base} (${i})`;
+  }
+
+  async function importHomeFromFile(file) {
+    const text = await file.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch { alert("Det där var inte giltig JSON."); return; }
+
+    if (!data || data.schema !== "vattningskollen.home.v1" || !data.home || !Array.isArray(data.plants)) {
+      alert("Filen såg inte ut som en hem-export från ALVI Växt.");
+      return;
+    }
+
+    const incomingHomeName = (data.home.name || "Hemma").trim() || "Hemma";
+    const targetHomeName = uniqueHomeName(incomingHomeName);
+
+    ensureHomeExists(targetHomeName);
+    const incomingRooms = Array.isArray(data.home.rooms) ? data.home.rooms : [];
+    for (const r of incomingRooms) addRoomToHome(targetHomeName, r);
+
+    const plants = loadPlants();
+    let added = 0;
+
+    for (const raw of data.plants) {
+      const p = validatePlantObject(raw);
+      if (!p) continue;
+      p.home = targetHomeName;
+      if (p.room) addRoomToHome(targetHomeName, p.room);
+      if (plants.some(x => x.id === p.id)) p.id = uid();
+      plants.push(p);
+      added++;
+    }
+
+    savePlants(plants);
+    localStorage.setItem("vk_current_home", targetHomeName);
+    localStorage.setItem("vk_current_room", "Alla rum");
+    render();
+    alert(`Importerade hem "${targetHomeName}" med ${added} växt(er) ✅`);
+  }
+
+  function removePlant(id) {
+    if (!confirm("Ta bort växten?")) return;
+    const plants = loadPlants().filter(p => p.id !== id);
+    savePlants(plants);
+    render();
+  }
+
+  async function editPlant(id) {
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) return;
+
+    window.__vk_editing_id = id;
+
+    $("e_name").value = p.name || "";
+    $("e_spot").value = p.spot || "";
+    $("e_window").value = p.window || "";
+    $("e_interval").value = Number(p.interval || 2);
+    $("e_last").value = p.last || "";
+    $("e_boughtWhere").value = p.boughtWhere || "";
+    $("e_boughtDate").value = p.boughtDate || "";
+    $("e_priceSek").value = (p.priceSek === "" || p.priceSek == null) ? "" : String(p.priceSek);
+    
+    $("e_note").value = p.note || "";
+
+    const homes = getHomes();
+    const eHome = $("e_home");
+    eHome.innerHTML = "";
+    homes.forEach(h => { const o=document.createElement("option"); o.value=h; o.textContent=h; eHome.appendChild(o); });
+    eHome.value = homes.includes(p.home) ? p.home : (p.home || "Hemma");
+
+    const fillRooms = () => {
+      const h = $("e_home").value || "Hemma";
+      const rooms = getRoomsForHome(h);
+      const eRoom = $("e_room");
+      eRoom.innerHTML = "";
+      rooms.forEach(r => { const o=document.createElement("option"); o.value=r; o.textContent=r; eRoom.appendChild(o); });
+      const current = (p.room || "").trim();
+      if (current && !rooms.includes(current)) {
+        const o=document.createElement("option"); o.value=current; o.textContent=current; eRoom.insertBefore(o, eRoom.firstChild);
+      }
+      eRoom.value = current || rooms[0] || "Vardagsrum";
+    };
+    fillRooms();
+    $("e_home").onchange = fillRooms;
+
+    openEditModal();
+  }
+
+  function openEditModal() {
+    const m = $("editModal");
+    m.style.display = "block";
+    m.onclick = (e) => { if (e.target === m) closeEditModal(); };
+  }
+  function closeEditModal() {
+    $("editModal").style.display = "none";
+    window.__vk_editing_id = null;
+  }
+  function saveEditModal() {
+    const id = window.__vk_editing_id;
+    if (!id) return;
+
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) { closeEditModal(); return; }
+
+    const name = $("e_name").value.trim();
+    if (!name) { alert("Namn kan inte vara tomt."); return; }
+
+    const home = ($("e_home").value || "Hemma").trim() || "Hemma";
+    const room = ($("e_room").value || "").trim();
+    const spot = $("e_spot").value.trim();
+    const windowVal = $("e_window").value;
+    const interval = Math.max(1, Number($("e_interval").value) || 2);
+    const last = $("e_last").value;
+
+    const boughtWhere = $("e_boughtWhere").value.trim();
+    const boughtDate = $("e_boughtDate").value;
+    const priceRaw = $("e_priceSek").value;
+    const priceSek = priceRaw === "" ? "" : Math.max(0, Number(priceRaw) || 0);
+
+    const instruction = $("e_instruction").value.trim();
+    const note = $("e_note").value.trim();
+
+    p.name = name;
+    p.home = home;
+    p.room = room;
+    p.spot = spot;
+    p.window = windowVal;
+    p.interval = interval;
+    p.last = last || "";
+    p.boughtWhere = boughtWhere;
+    p.boughtDate = boughtDate || "";
+    p.priceSek = priceSek;
+    p.instruction = instruction;
+    p.note = note;
+
+    ensureHomeExists(home);
+    if (room) addRoomToHome(home, room);
+
+    savePlants(plants);
+    localStorage.setItem("vk_current_home", home);
+    localStorage.setItem("vk_current_room", "Alla rum");
+    closeEditModal();
+    render();
+  }
+
+  function clearAll() {
+    if (!confirm("Vill du rensa ALLT från denna enhet?")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(ROOMS_KEY);
+    localStorage.removeItem(HOMES_KEY);
+    localStorage.removeItem(UI_KEY);
+    localStorage.removeItem("vk_current_home");
+    localStorage.removeItem("vk_current_room");
+    render();
+  }
+
+  function seedYourPlants() {
+    const plants = loadPlants();
+    if (plants.length > 0 && !confirm("Du har redan växter sparade. Vill du lägga in exempel ändå?")) return;
+
+    const examples = [
+      { name: "Stor fredskalla", home:"Hemma", room:"Vardagsrum", spot:"Fönsterbrädan", window: "Vid fönster", interval: 2, last: "", boughtWhere: "Blomsterlandet", boughtDate: "2026-02-03", priceSek: 100, instruction: "Vattna ordentligt tills det rinner igenom. Häll bort överflöd efter 10 min.", note: "", photoDataUrl: "", favorite:true, lastOpened: Date.now() },
+      { name: "Fönsterviva", home:"Hemma", room:"Kök", spot:"Köksfönstret", window: "Vid fönster", interval: 2, last: "", boughtWhere: "", boughtDate: "", priceSek: 79, instruction: "Håll jorden jämnt fuktig.", note: "", photoDataUrl: "", favorite:false, lastOpened: 0 },
+      { name: "Monstera", home:"Hemma", room:"Vardagsrum", spot:"Hyllan", window: "Halvskugga", interval: 7, last: "", boughtWhere: "", boughtDate: "", priceSek: "", instruction: "Låt torka upp mellan vattningarna. Känn 2 cm ner i jorden först.", note: "", photoDataUrl: "", favorite:false, lastOpened: 0 },
+    ].map(x => ({ id: uid(), ...x }));
+
+    ensureHomeExists("Hemma");
+    for (const p of examples) if (p.room) addRoomToHome(p.home, p.room);
+
+    savePlants(plants.concat(examples));
+    render();
+  }
+
+  function todaysListText() {
+    const home = $("homeFilter").value || "Hemma";
+    const roomFilter = $("roomFilter").value || "Alla rum";
+    const plants = scopePlants(loadPlants()).map(p => ({...p, _s: statusFor(p)}));
+    const due = plants.filter(p => p._s.tag === "due");
+    const today = todayISO();
+
+    if (due.length === 0) return `Dagens vattningslista (${today}) – ${home}${roomFilter!=="Alla rum" ? " / "+roomFilter : ""}:
+- Inget behöver vattnas idag ✅`;
+
+    const lines = [];
+    lines.push(`Dagens vattningslista (${today}) – ${home}${roomFilter!=="Alla rum" ? " / "+roomFilter : ""}:`);
+    for (const p of due) {
+      const where = [p.room, p.window, p.spot].filter(Boolean).join(" • ");
+      lines.push(`- ${p.name}${where ? " ("+where+")" : ""} • Senast: ${p.last || "okänt"} • Instr: ${p.instruction || "—"}`);
+    }
+    return lines.join("\n");
+  }
+
+  async function copyToClipboard(text) {
+    try { await navigator.clipboard.writeText(text); alert("Kopierat ✅"); }
+    catch {
+      const ta = document.createElement("textarea");
+      ta.value = text; document.body.appendChild(ta);
+      ta.select(); document.execCommand("copy"); ta.remove();
+      alert("Kopierat ✅");
+    }
+  }
+
+  function groupByRoom(plants) {
+    const map = new Map();
+    for (const p of plants) {
+      const room = (p.room || "Okänt rum").trim() || "Okänt rum";
+      if (!map.has(room)) map.set(room, []);
+      map.get(room).push(p);
+    }
+    for (const [k, arr] of map.entries()) arr.sort((a,b)=>(a.name||"").localeCompare(b.name||"","sv"));
+    return Array.from(map.entries()).sort((a,b)=>a[0].localeCompare(b[0],"sv"));
+  }
+
+  function openPDFForCurrentHome() {
+    const home = $("homeFilter").value || "Hemma";
+    const plants = loadPlants().filter(p => (p.home||"Hemma") === home);
+    const groups = groupByRoom(plants);
+    const created = new Date().toISOString().slice(0,16).replace("T"," ");
+
+    const sections = groups.map(([room, arr]) => {
+      const cards = arr.map(p => {
+        const status = statusFor(p);
+        const nextTxt = status.next ? status.next.toISOString().slice(0,10) : "—";
+        const price = (p.priceSek === "" || p.priceSek == null) ? "" : `${p.priceSek} kr`;
+        const buyParts = [];
+        if (p.boughtWhere) buyParts.push(`Inköpt: ${p.boughtWhere}`);
+        if (p.boughtDate) buyParts.push(`Datum: ${p.boughtDate}`);
+        if (price) buyParts.push(`Inköpspris: ${price}`);
+        const buy = buyParts.join(" • ");
+
+        return `
+          <div class="pCard">
+            <div class="pTop">
+              <div class="pImg">
+                ${p.photoDataUrl ? `<img src="${p.photoDataUrl}" alt="" />` : `<div class="pNo">Inget foto</div>`}
+              </div>
+              <div>
+                <div class="pName">${escapeHtml(p.name || "Namnlös växt")}</div>
+                <div class="pMeta">
+                  <span class="pill">🚪 ${escapeHtml(p.room || "—")}</span>
+                  ${p.window ? `<span class="pill">🪟 ${escapeHtml(p.window)}</span>` : ``}
+                  ${p.spot ? `<span class="pill">📍 ${escapeHtml(p.spot)}</span>` : ``}
+                </div>
+                <div class="pLine"><b>Status:</b> ${escapeHtml(status.label)} &nbsp; <b>Nästa:</b> ${escapeHtml(nextTxt)}</div>
+                <div class="pLine"><b>Intervall:</b> var ${Number(p.interval)||1} dag &nbsp; <b>Senast:</b> ${escapeHtml(p.last || "okänt")}</div>
+                ${buy ? `<div class="pLine">${escapeHtml(buy)}</div>` : ``}
+              </div>
+            </div>
+            ${p.instruction ? `<div class="pBlock"><b>Instruktion:</b> ${escapeHtml(p.instruction)}</div>` : ``}
+            ${p.note ? `<div class="pBlock"><b>Anteckning:</b> ${escapeHtml(p.note)}</div>` : ``}
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <h2 class="roomTitle">🚪 ${escapeHtml(room)} <span class="count">(${arr.length})</span></h2>
+        <div class="grid">${cards}</div>
+      `;
+    }).join("");
+
+        // Bygg ett utskriftsvänligt dokument (utan <script> i HTML-strängen, för maximal kompatibilitet)
+    const printHTML = `<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ALVI Växt – ${escapeHtml(home)}</title>
+  <style>
+    body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin:28px; color:#111; }
+    h1{ font-size:18px; margin:0 0 10px; }
+    .top{ display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
+    .muted{ color:#555; font-size:12px; }
+    .room{ margin-top:14px; font-weight:800; font-size:13px; }
+    .card{ border:1px solid #ddd; border-radius:12px; padding:12px; margin-top:8px; display:flex; gap:10px; align-items:flex-start; }
+    .img{ width:82px; height:82px; border-radius:12px; overflow:hidden; background:#f2f2f2; display:flex; align-items:center; justify-content:center; font-size:11px; color:#666; }
+    .img img{ width:100%; height:100%; object-fit:cover; }
+    .name{ font-weight:900; margin:0 0 4px; }
+    .line{ font-size:12px; margin:2px 0; }
+    .tag{ display:inline-block; padding:2px 8px; border:1px solid #ddd; border-radius:999px; font-size:11px; margin-right:6px; }
+    .smallgap{ height:6px; }
+    @media print { body{ margin:14mm; } }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div>
+      <h1>ALVI Växt – ${escapeHtml(home)}</h1>
+      <div class="muted">Skapad: ${new Date().toISOString().slice(0,16).replace("T"," ")}</div>
+    </div>
+  </div>
+  ${roomBlocks}
+</body>
+</html>`;
+
+    const w = window.open("", "_blank");
+    if (!w) { alert("Webbläsaren blockerade popup-fönstret. Tillåt popup för att skapa PDF."); return; }
+    w.document.open();
+    w.document.write(printHTML);
+    w.document.close();
+
+    // Starta utskrift när fönstret hunnit rendera
+    setTimeout(() => { try { w.focus(); w.print(); } catch(e){} }, 400);
+  }
+
+  function addHome() {
+    const name = prompt("Namn på nytt hem:", "");
+    if (name === null) return;
+    const clean = (name || "").trim();
+    if (!clean) return;
+    ensureHomeExists(clean);
+
+    localStorage.setItem("vk_current_home", clean);
+    localStorage.setItem("vk_current_room", "Alla rum");
+    render();
+  }
+  function addRoom() {
+    const home = $("homeFilter").value || "Hemma";
+    const room = prompt(`Nytt rum i "${home}":`, "");
+    if (room === null) return;
+    const clean = (room || "").trim();
+    if (!clean) return;
+    addRoomToHome(home, clean);
+    localStorage.setItem("vk_current_room", clean);
+    render();
+  }
+
+  async function handleChosenPhotoFile(file) {
+    if (!file) return;
+    try { pendingPhotoDataUrl = await fileToResizedDataURL(file); setMiniPreview(pendingPhotoDataUrl); }
+    catch { alert("Kunde inte läsa bilden. Prova igen."); }
+  }
+
+  async function handleImportInput(inputEl) {
+    const file = inputEl.files && inputEl.files[0];
+    if (!file) return;
+    try { await importPlantFromFile(file); }
+    finally { inputEl.value = ""; }
+  }
+
+  function addPlantFromForm(){
+    const name = $("name").value.trim();
+    const home = ($("home").value || "Hemma").trim() || "Hemma";
+    const room = ($("room").value || "").trim();
+    const spot = $("spot").value.trim();
+    const windowVal = $("window").value;
+    const interval = Math.max(1, Number($("interval").value) || 2);
+    const last = $("last").value;
+
+    const boughtWhere = $("boughtWhere").value.trim();
+    const boughtDate = $("boughtDate").value;
+    const priceRaw = $("priceSek").value;
+    const priceSek = priceRaw === "" ? "" : Math.max(0, Number(priceRaw) || 0);
+
+    const instruction = $("instrCustom").value.trim();
+    const note = $("note").value.trim();
+
+    if (!name) { alert("Skriv ett namn eller smeknamn på växten."); return; }
+
+    ensureHomeExists(home);
+    if (room) addRoomToHome(home, room);
+
+    const plants = loadPlants();
+    plants.push({ id: uid(), name, home, room, spot, window: windowVal, interval, last, boughtWhere, boughtDate, priceSek, instruction, note, photoDataUrl: pendingPhotoDataUrl, favorite:false, lastOpened:0 });
+    savePlants(plants);
+
+    localStorage.setItem("vk_current_home", home);
+    localStorage.setItem("vk_current_room", "Alla rum");
+
+    $("name").value=""; $("spot").value=""; $("window").value=""; $("note").value="";
+    $("boughtWhere").value=""; $("boughtDate").value=""; $("priceSek").value="";
+    $("instrCustom").value=""; $("last").value="";
+    pendingPhotoDataUrl="";
+    $("photoCamera").value=""; $("photoLibrary").value="";
+    setMiniPreview("");
+
+    setTab("today");
+  }
+
+  
+  // ----- Backup -----
+  function buildFullBackupPayload(){
+    const ui = ensureBackupFields();
+    const plants = loadPlants(); // inkluderar arkiv
+    const roomsByHome = loadRoomsByHome();
+    const homes = loadHomes();
+    const currentHome = $("homeFilter") ? ($("homeFilter").value || "Hemma") : "Hemma";
+    return {
+      schema: "vattningskollen.backup.v1",
+      exportedAt: new Date().toISOString(),
+      currentHome,
+      homes,
+      roomsByHome,
+      plants
+    };
+  }
+
+  async function backupNow(){
+    const payload = buildFullBackupPayload();
+    const text = JSON.stringify(payload, null, 2);
+    const filename = `vattningskollen-backup-${new Date().toISOString().slice(0,10)}.json`;
+    const blob = new Blob([text], {type:"application/json"});
+    const file = new File([blob], filename, {type:"application/json"});
+
+    // 1) Försök dela (bäst på mobil: användaren väljer Drive/OneDrive/Filer)
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+        await navigator.share({ files: [file], title: "ALVI Växt – säkerhetskopia" });
+        markBackupDone();
+        showBackupModal("✅ Delningsrutan öppnades. Välj Google Drive / OneDrive / Filer – eller skicka via WhatsApp/SMS till någon du litar på. Då har du en trygg kopia.");
+        return;
+      }
+    } catch(e) {
+      // användaren kan ha avbrutit – visa inget fel, bara gå vidare till nästa metod
+    }
+
+    // 2) Försök “Spara som…” (Chrome/Edge/Android/desktop)
+    try {
+      if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        markBackupDone();
+        showBackupModal("✅ Spara-rutan öppnades. Filen är sparad där du valde.");
+        return;
+      }
+    } catch(e) {
+      // avbrutet eller inte tillåtet → fall back till nedladdning
+    }
+
+    // 3) Fallback: ladda ner (hamnar ofta i Downloads)
+    downloadText(filename, text, "application/json");
+    markBackupDone();
+    showBackupModal("⬇️ Säkerhetskopian laddades ner. Om den hamnar i Downloads/Hämtade filer: öppna filen och dela den till Drive/OneDrive/Filer – eller skicka via WhatsApp/SMS för extra trygghet.");
+  }
+
+  function markBackupDone(){
+    const ui = ensureBackupFields();
+    ui.lastBackupAt = Date.now();
+    ui.changesSinceBackup = 0;
+    saveUI(ui);
+    updateBackupStatus();
+  }
+
+  function formatDaysAgo(ts){
+    if (!ts) return "aldrig";
+    const days = Math.floor((Date.now() - ts) / (1000*60*60*24));
+    return days === 0 ? "idag" : (days === 1 ? "igår" : `${days} dagar sedan`);
+  }
+
+  function updateBackupStatus(){
+    if (!$("backupStatus")) return;
+    const ui = ensureBackupFields();
+    const last = ui.lastBackupAt || 0;
+    const ch = ui.changesSinceBackup || 0;
+    $("backupStatus").textContent = `Senaste backup: ${formatDaysAgo(last)} • Ändringar sedan dess: ${ch}`;
+
+    // Mjuk påminnelse (endast text – ingen notis)
+    const days = last ? Math.floor((Date.now() - last) / (1000*60*60*24)) : 9999;
+    const needs = (ch >= 10) || (days >= 7);
+    if ($("backupHelpLine")) {
+      $("backupHelpLine").textContent = needs ? "Tips: Det var ett tag sedan du gjorde en kopia. Tryck ‘Säkerhetskopiera nu’ så slipper du bli överraskad." : "";
+    }
+  }
+
+  function showBackupModal(text){
+    $("backupModalText").textContent = text;
+    $("backupHowText").style.display = "none";
+    if ($("backupHelpLine")) $("backupHelpLine").textContent = text;
+    $("backupModal").style.display = "block";
+    $("backupModal").onclick = (e)=>{ if (e.target === $("backupModal")) closeBackupModal(); };
+  }
+  function closeBackupModal(){
+    $("backupModal").style.display = "none";
+  }
+
+  // ----- Arkiv -----
+  let __archivePlantId = null;
+
+  function openArchiveModal(id){
+    __archivePlantId = id;
+    $("archiveReason").value = "";
+    $("archiveNote").value = "";
+    $("archiveModal").style.display = "block";
+    $("archiveModal").onclick = (e)=>{ if (e.target === $("archiveModal")) closeArchiveModal(); };
+  }
+  function closeArchiveModal(){
+    $("archiveModal").style.display = "none";
+    __archivePlantId = null;
+  }
+  function doArchive(){
+    const id = __archivePlantId;
+    if (!id) return;
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) { closeArchiveModal(); return; }
+
+    const name = p.name || "växten";
+    const ok = confirm(`Arkivera "${name}"? (Den försvinner från listorna men kan återställas.)`);
+    if (!ok) return;
+
+    p.archived = true;
+    p.archivedAt = Date.now();
+    p.archivedReason = ($("archiveReason").value || "").trim();
+    p.archivedNote = ($("archiveNote").value || "").trim();
+    p.wasRoom = (p.room || "").trim();
+
+    // när den arkiveras: behåll hem, men töm rum i aktiva listor
+    // (vi visar wasRoom i arkivet)
+    // p.room får gärna vara kvar också, men den ska inte synas i aktiva listor ändå.
+    savePlants(plants);
+    closeArchiveModal();
+    render();
+  }
+
+  function restoreFromArchive(id){
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) return;
+    const ok = confirm(`Återställ "${p.name||"växten"}" till aktiva listor?`);
+    if (!ok) return;
+    p.archived = false;
+    p.archivedAt = 0;
+    p.archivedReason = "";
+    p.archivedNote = "";
+    // försök återställa rum
+    if (!p.room && p.wasRoom) p.room = p.wasRoom;
+    p.wasRoom = "";
+    savePlants(plants);
+    render();
+  }
+
+  function deleteArchived(id){
+    const plants = loadPlants();
+    const p = plants.find(x => x.id === id);
+    if (!p) return;
+    const ok = confirm(`Ta bort "${p.name||"växten"}" permanent?`);
+    if (!ok) return;
+    const filtered = plants.filter(x => x.id !== id);
+    savePlants(filtered);
+    render();
+  }
+
+  function renderArchive(){
+    const panel = $("archivePanel");
+    const list = $("archiveList");
+    if (!panel || !list) return;
+
+    const home = $("homeFilter").value || "Hemma";
+    const sort = $("archiveSort").value;
+
+    let items = loadPlants().filter(p => (p.home||"Hemma") === home && p.archived);
+
+    if (sort === "name") items.sort((a,b)=>(a.name||"").localeCompare(b.name||"","sv"));
+    if (sort === "room") items.sort((a,b)=>((a.wasRoom||a.room||"").localeCompare((b.wasRoom||b.room||""),"sv")));
+    if (sort === "date") items.sort((a,b)=>(b.archivedAt||0)-(a.archivedAt||0));
+
+    list.innerHTML = "";
+    if (items.length === 0){
+      const t = document.createElement("div");
+      t.className = "muted";
+      t.textContent = "Inga arkiverade växter i det här hemmet ännu.";
+      list.appendChild(t);
+      return;
+    }
+
+    for (const p of items){
+      const el = document.createElement("div");
+      el.className = "plant";
+      el.style.background = "var(--panel2)";
+      el.style.borderColor = "var(--border)";
+      el.innerHTML = "";
+      // thumb
+      const th = document.createElement("div");
+      th.className = "thumb";
+      if (p.photoDataUrl){
+        const img = document.createElement("img");
+        img.src = p.photoDataUrl; img.alt = p.name || "Växt";
+        th.appendChild(img);
+      } else {
+        const sp = document.createElement("span");
+        sp.textContent = "Inget foto";
+        th.appendChild(sp);
+      }
+
+      const main = document.createElement("div");
+      const when = p.archivedAt ? new Date(p.archivedAt).toISOString().slice(0,10) : "—";
+      const room = (p.wasRoom || p.room || "—");
+      const reason = (p.archivedReason || "").trim();
+      const note = (p.archivedNote || "").trim();
+      main.innerHTML = `
+        <div class="titleRow">
+          <div class="name">${escapeHtml(p.name || "Namnlös växt")}</div>
+          <span class="badge ok">🪦 Arkiverad</span>
+        </div>
+        <div class="meta">Rum: <b style="color:var(--text);">${escapeHtml(room)}</b> • Datum: <b style="color:var(--text);">${escapeHtml(when)}</b></div>
+        ${reason ? `<div class="kv" style="margin-top:6px;"><b>Orsak:</b> ${escapeHtml(reason)}</div>` : ``}
+        ${note ? `<div class="kv" style="margin-top:6px;"><b>Anteckning:</b> ${escapeHtml(note)}</div>` : ``}
+      `;
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+      const restore = document.createElement("button");
+      restore.className = "primary small";
+      restore.type="button";
+      restore.textContent = "Återställ";
+      restore.onclick = ()=>restoreFromArchive(p.id);
+
+      const share = document.createElement("button");
+      share.className = "ghost small";
+      share.type="button";
+      share.textContent = "Dela";
+      share.onclick = ()=>exportOne(p.id);
+
+      const del = document.createElement("button");
+      del.className = "danger small";
+      del.type="button";
+      del.textContent = "Ta bort";
+      del.onclick = ()=>deleteArchived(p.id);
+
+      actions.append(restore, share, del);
+
+      el.append(th, main, actions);
+      list.appendChild(el);
+    }
+  }
+
+  function exportArchiveForHome(){
+    const home = $("homeFilter").value || "Hemma";
+    const plants = loadPlants().filter(p => (p.home||"Hemma") === home && p.archived);
+    const payload = { schema: "vattningskollen.archive.v1", exportedAt: new Date().toISOString(), home, plants };
+    downloadText(`arkiv-${home}.json`, JSON.stringify(payload, null, 2));
+  }
+
+function migrateNow(){
+    loadPlants();
+    alert("Klart! (Om inköp/pris låg i gamla fält eller anteckning så flyttas det nu.)");
+    render();
+  }
+
+  function init(){
+    ensureHomeExists("Hemma");
+
+    const ui = loadUI();
+    setTheme(ui.theme || "dark");
+
+    $("tabToday").onclick = ()=>setTab("today");
+    $("tabAll").onclick = ()=>setTab("all");
+    $("tabAdd").onclick = ()=>setTab("add");
+    $("tabMore").onclick = ()=>setTab("more");
+    const startTab = ui.tab || "today";
+    setTab(startTab);
+
+    $("themeBtn").onclick = toggleTheme;
+    // Standard: ljust läge (tvinga vid första körning / ny UI-nyckel)
+    setTheme("light");
+    const ui0 = loadUI();
+    if (ui0.themeChosen && ui0.theme) setTheme(ui0.theme);
+
+
+    $("homeFilter").onchange = ()=>{ localStorage.setItem("vk_current_home", $("homeFilter").value); localStorage.setItem("vk_current_room","Alla rum"); render(); };
+    $("roomFilter").onchange = ()=>{ localStorage.setItem("vk_current_room", $("roomFilter").value); render(); };
+    if ($("addHomeBtn")) $("addHomeBtn").onclick = addHome;
+    if ($("addRoomBtn")) $("addRoomBtn").onclick = addRoom;
+
+    $("refreshBtn").onclick = render;
+    $("goAllBtn").onclick = ()=>setTab("all");
+    if ($("backupNowBtn")) $("backupNowBtn").onclick = backupNow;
+
+
+    $("sort").onchange = render;
+    $("filter").onchange = render;
+    $("copyTodayBtn").onclick = ()=>copyToClipboard(todaysListText());
+
+    $("home").onchange = renderRoomSelects;
+    $("addBtn").onclick = addPlantFromForm;
+    $("seedBtn").onclick = seedYourPlants;
+
+    $("takePhotoBtn").onclick = ()=>$("photoCamera").click();
+    $("pickPhotoBtn").onclick = ()=>$("photoLibrary").click();
+    $("clearPhotoBtn").onclick = ()=>{ pendingPhotoDataUrl=""; $("photoCamera").value=""; $("photoLibrary").value=""; setMiniPreview(""); };
+    $("photoCamera").onchange = ()=>handleChosenPhotoFile($("photoCamera").files && $("photoCamera").files[0]);
+    $("photoLibrary").onchange = ()=>handleChosenPhotoFile($("photoLibrary").files && $("photoLibrary").files[0]);
+    setMiniPreview("");
+
+    $("pdfBtn").onclick = openPDFForCurrentHome;
+    $("exportHomeBtn").onclick = exportCurrentHome;
+    $("exportAllBtn").onclick = exportAllPlants;
+    $("importTop").onchange = ()=>handleImportInput($("importTop"));
+    $("importHome").onchange = async ()=>{ const file=$("importHome").files && $("importHome").files[0]; if(!file) return; try{ await importHomeFromFile(file);} finally{$("importHome").value="";} };
+    $("migrateBtn").onclick = migrateNow;
+    $("clearBtn").onclick = clearAll;
+
+    $("editCloseBtn").onclick = closeEditModal;
+    $("editCancelBtn").onclick = closeEditModal;
+    $("editSaveBtn").onclick = saveEditModal;
+
+    // Säkerhetskopia-panel (på startsidan)
+    if ($("backupToggleBtn")) $("backupToggleBtn").onclick = ()=>{
+      const p = $("backupPanel");
+      const open = (p.style.display === "none" || !p.style.display);
+      p.style.display = open ? "block" : "none";
+      $("backupToggleBtn").textContent = open ? "Stäng" : "Öppna";
+      updateBackupStatus();
+    };
+
+    // Backup modal
+    $("backupCloseBtn").onclick = closeBackupModal;
+    $("backupModalOkBtn").onclick = closeBackupModal;
+    $("backupHowBtn").onclick = ()=>{ const t=$("backupHowText"); t.style.display = (t.style.display==="none"||!t.style.display) ? "block" : "none"; };
+
+    // Arkiv
+    $("showArchiveBtn").onclick = ()=>{ const p=$("archivePanel"); p.style.display = (p.style.display==="none"||!p.style.display) ? "block" : "none"; renderArchive(); };
+    $("archiveSort").onchange = renderArchive;
+    $("exportArchiveHomeBtn").onclick = exportArchiveForHome;
+
+    // Arkivera-modal
+    $("archiveCloseBtn").onclick = closeArchiveModal;
+    $("archiveCancelBtn").onclick = closeArchiveModal;
+    $("archiveDoBtn").onclick = doArchive;
+
+    // Installera-ruta
+    $("installCloseBtn").onclick = ()=>dismissInstallModal(true);
+    $("installLaterBtn").onclick = ()=>dismissInstallModal(true);
+    $("installDoBtn").onclick = doInstall;
+
+    ensureBackupFields();
+    updateBackupStatus();
+    render();
+  }
+
+
+  // ----- Installera som app (PWA) -----
+  let deferredInstallPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    // Stoppa minirutan – vi visar egen ruta istället
+    e.preventDefault();
+    deferredInstallPrompt = e;
+  });
+
+  function isIOS(){
+    return /iphone|ipad|ipod/i.test(navigator.userAgent);
+  }
+  function isInStandalone(){
+    return window.matchMedia && window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+  }
+
+  function showInstallModal(){
+    if (!$("installModal")) return;
+    // visa inte om redan installerad
+    if (isInStandalone()) return;
+    // visa inte om användaren redan stängt den tidigare
+    const ui = loadUI();
+    if (ui.installDismissed) return;
+
+    const how = $("installHowText");
+    if (isIOS()){
+      how.style.display = "block";
+      how.innerHTML = "På iPhone: tryck <b>Dela</b> i Safari och välj <b>“Lägg till på hemskärmen”</b>.";
+    } else if (!deferredInstallPrompt){
+      how.style.display = "block";
+      how.innerHTML = "Tryck <b>Installera</b> (eller använd webbläsarens meny → <b>Installera app</b> / <b>Lägg till på hemskärmen</b>).";
+    } else {
+      how.style.display = "none";
+      how.textContent = "";
+    }
+
+    $("installModal").style.display = "block";
+    $("installModal").onclick = (e)=>{ if (e.target === $("installModal")) dismissInstallModal(true); };
+  }
+
+  function dismissInstallModal(save=true){
+    $("installModal").style.display = "none";
+    if (save){
+      const ui = loadUI(); ui.installDismissed = true; saveUI(ui);
+    }
+  }
+
+  async function doInstall(){
+    if (isIOS()){
+      // iOS har ingen beforeinstallprompt
+      $("installHowText").style.display = "block";
+      $("installHowText").innerHTML = "På iPhone: tryck <b>Dela</b> i Safari och välj <b>“Lägg till på hemskärmen”</b>.";
+      return;
+    }
+    if (!deferredInstallPrompt){
+      // inget prompt-stöd, visa text
+      $("installHowText").style.display = "block";
+      $("installHowText").innerHTML = "Om du inte ser en install-knapp: öppna webbläsarens meny och välj <b>Installera app</b> / <b>Lägg till på hemskärmen</b>.";
+      return;
+    }
+    try{
+      deferredInstallPrompt.prompt();
+      const choice = await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      dismissInstallModal(true);
+    } catch(e){
+      // om något går fel – stäng ändå
+      dismissInstallModal(true);
+    }
+  }
+
+
+  init();
+</script>
+</body>
+</html>
