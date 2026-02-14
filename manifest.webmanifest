@@ -1,0 +1,27 @@
+{
+  "name": "ALVI Växt",
+  "short_name": "ALVI Växt",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0c10",
+  "theme_color": "#1b6bff",
+  "description": "En enkel växt- och vattningsapp med hem/rum, backup och arkiv.",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
