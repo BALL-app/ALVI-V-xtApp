@@ -420,7 +420,6 @@
       .photoRow{gap:10px}
     }
 
-
 .btn.small{padding:10px 12px;border-radius:14px;font-weight:800;}
 .collapsible{ padding:0; overflow:hidden; }
 .collapsibleSummary{
@@ -442,18 +441,13 @@
 .collapsibleBody{ padding:0 14px 14px; }
 details.collapsible[open] .collapsibleSummary{ border-bottom:1px dashed rgba(0,0,0,.08); }
 
-
-
-
 /* Enhetlig höjd under flikarna */
 .section{ padding-top: 12px; }
 #sec-add .card:first-child{ margin-top: 0 !important; }
 
-
 /* Mer-fliken: PDF-rutan ska ligga direkt under flikarna */
 #sec-more { padding-top: 12px !important; }
 #sec-more > .card:first-child { margin-top: 0 !important; }
-
 
 /* Enhetligare kort: även "dashed"/transparenta rutor ska få lite vitt */
 .card[style*="background:#fff0"]{
@@ -464,7 +458,6 @@ details.collapsible[open] .collapsibleSummary{ border-bottom:1px dashed rgba(0,0
   background: rgba(255,255,255,.65) !important;
 }
 
-
 /* Flera foton per växt: vertikal "strip" bredvid huvudbild */
 .thumbWrap{display:flex; gap:8px; align-items:stretch;}
 .thumbMain{width:84px; height:84px; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--soft); flex:0 0 auto;}
@@ -473,8 +466,6 @@ details.collapsible[open] .collapsibleSummary{ border-bottom:1px dashed rgba(0,0
 .thumbMini{width:26px; height:26px; border-radius:9px; border:1px solid var(--line); background:rgba(255,255,255,.7); overflow:hidden; padding:0; cursor:pointer;}
 .thumbMini img{width:100%; height:100%; object-fit:cover; display:block;}
 .thumbMini.active{outline:2px solid rgba(37,99,235,.55);}
-
-
 
 /* ===== Förbättrad nattläge-text ===== */
 body.dark,
@@ -506,7 +497,6 @@ body.dark input::placeholder {
   color: rgba(255,255,255,0.6) !important;
 }
 
-
 /* ===== Förbättrad bildmodal storlek ===== */
 .modal-content {
   max-height: 90vh !important;
@@ -522,7 +512,6 @@ body.dark input::placeholder {
 .modal-body {
   overflow: hidden !important;
 }
-
 
 /* ===== Bildmodal: garanterat utan scroll ===== */
 #photoModal{
@@ -559,8 +548,6 @@ body.dark input::placeholder {
   margin-top: 0 !important;
 }
 
-
-        
         .photoModalFooter{
           display:flex;
           justify-content:center;
@@ -584,7 +571,6 @@ body.dark .btn-secondary:disabled {
   opacity: 1 !important;
 }
 
-
 .appInfoFooter{
   margin: 40px 0 10px 0;
   padding: 0 12px;
@@ -600,6 +586,72 @@ body.dark .appInfoFooter{
 
 </style>
         
+
+<style id="pwa-install-style">
+  .pwa-install-backdrop{
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 9999;
+  }
+  .pwa-install-backdrop.show{ display: flex; }
+  .pwa-install-modal{
+    width: min(420px, 100%);
+    background: var(--card-bg, #fff);
+    color: var(--text-color, #111);
+    border-radius: 18px;
+    box-shadow: 0 18px 60px rgba(0,0,0,.25);
+    border: 1px solid rgba(0,0,0,.08);
+    overflow: hidden;
+  }
+  body.dark .pwa-install-modal, body[data-theme="dark"] .pwa-install-modal{
+    background: rgba(16, 24, 40, .92);
+    color: #fff;
+    border-color: rgba(255,255,255,.12);
+  }
+  .pwa-install-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+  }
+  body.dark .pwa-install-header, body[data-theme="dark"] .pwa-install-header{
+    border-bottom-color: rgba(255,255,255,.12);
+  }
+  .pwa-install-title{ font-weight: 800; font-size: 16px; }
+  .pwa-install-x{
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.12);
+    background: transparent;
+    font-size: 22px; line-height: 1;
+    cursor: pointer;
+  }
+  body.dark .pwa-install-x, body[data-theme="dark"] .pwa-install-x{
+    border-color: rgba(255,255,255,.18);
+    color: #fff;
+  }
+  .pwa-install-body{ padding: 12px 16px 2px 16px; font-size: 14px; opacity: .9; }
+  .pwa-install-actions{
+    display:flex; gap: 10px; justify-content:flex-end;
+    padding: 12px 16px 16px 16px;
+  }
+  .pwa-install-btn-primary{
+    background: #2563eb; color: #fff; border: none;
+    padding: 10px 14px; border-radius: 12px; font-weight: 700;
+  }
+  .pwa-install-btn-secondary{
+    background: transparent; color: inherit;
+    border: 1px solid rgba(0,0,0,.18);
+    padding: 10px 14px; border-radius: 12px; font-weight: 700;
+  }
+  body.dark .pwa-install-btn-secondary, body[data-theme="dark"] .pwa-install-btn-secondary{
+    border-color: rgba(255,255,255,.18);
+  }
+</style>
+
 </head>
 
 <body>
@@ -726,10 +778,6 @@ body.dark .appInfoFooter{
       </div>
     </section>
 
-    
-
-    
-
     <!-- LÄGG TILL -->
     <section class="section" id="sec-add">
       <div class="card" style="box-shadow:none;border-radius: var(--radius2); background:#fff0; border:1px dashed var(--line)">
@@ -844,7 +892,6 @@ body.dark .appInfoFooter{
 </div>
         </div>
 
-      
       </div>
     </section>
 
@@ -928,7 +975,6 @@ body.dark .appInfoFooter{
       return Math.floor(ms / (1000*60*60*24));
     };
 
-    
     function ensurePhotos(p){
       if(!p) return p;
       if(!Array.isArray(p.photos)){
@@ -1011,7 +1057,6 @@ function uid(){
       };
     }
 
-    
     // ========== Beständig lagring (IndexedDB + localStorage) ==========
     const IDB_NAME = "alvi_vaxt_db";
     const IDB_STORE = "kv";
@@ -1145,11 +1190,9 @@ function loadState(){
       }catch(e){}
     });
 
-
     // Vid appstart: håll alla listor stängda oavsett tidigare val
     state.todayOpenTouched = false;
     state.todayOpen = null;
-
 
     // ========== Felsökning ==========
     const debugLogEl = document.getElementById("debugLog");
@@ -1181,7 +1224,6 @@ function loadState(){
       return d;
     }
 
-
     const debugCopyBtn = document.getElementById("debugCopy");
     const debugClearBtn = document.getElementById("debugClear");
     if(debugCopyBtn){
@@ -1201,7 +1243,6 @@ function loadState(){
         if(debugStatusEl) debugStatusEl.textContent = "Rensad";
       });
     }
-
 
     // ========== Theme ==========
     const toggleThemeBtn = document.getElementById("toggleTheme");
@@ -1264,7 +1305,6 @@ function loadState(){
       setTab(t.dataset.tab);
     }));
 
-    
     // ========== Växter ==========
     const plantsAllDetails = document.getElementById("plantsAllDetails");
 
@@ -1461,7 +1501,6 @@ const main = document.createElement("div");
       const actions = document.createElement("div");
       actions.className = "plantActions";
 
-      
       const waterBtn = document.createElement("button");
       const undoBtn = document.createElement("button");
       undoBtn.className = "btn";
@@ -1869,7 +1908,6 @@ const details = document.createElement("details");
       if(state.todayOpen == null) state.todayOpen = null;
       if(state.todayOpenTouched == null) state.todayOpenTouched = false;
 
-
       todayHome.addEventListener("change", () => {
         state.todayOpenTouched = false;
         state.todayOpen = 'need';
@@ -1888,7 +1926,6 @@ const details = document.createElement("details");
     }
     initTodayFilters();
 
-    
     // ========== Scope (Hem/Rum) ==========
     function currentScope(){
       // Se till att selectar är ifyllda
@@ -1979,7 +2016,6 @@ function renderToday(){
           if(dLater && dLater!==d) dLater.open = false;
         });
       });
-
 
     }
 
@@ -2235,7 +2271,6 @@ function renderFavoritesCountsOnly(){
       });
     }
 
-    
     // ===== Modal-läge: minnen vs växtfoton =====
     let _modalMode = "gallery"; // "gallery" | "plantPhotos"
     let _modalPhotos = [];      // används när _modalMode === "plantPhotos"
@@ -2281,7 +2316,6 @@ function renderFavoritesCountsOnly(){
         if(e.target === photoModal) closeGalleryModal();
       });
     }
-
 
     let _modalPlantId = null;
     let _modalIndex = 0;
@@ -2355,7 +2389,6 @@ function renderFavoritesCountsOnly(){
       _modalIndex = Math.min(p.gallery.length-1, _modalIndex+1);
       renderGalleryModal();
     });
-
 
     photoModalChange?.addEventListener("click", () => {
       if(_modalMode !== "plantPhotos") return;
@@ -2496,7 +2529,6 @@ const globalPhotoPicker = document.getElementById("globalPhotoPicker");
         return dataUrl;
       }
     }
-
 
     document.getElementById("fillExample").addEventListener("click", () => {
       pName.value = "Fredskalla";
@@ -2954,15 +2986,6 @@ if(typeof _origRender === "function"){
   </p>
 </div>
 
-
-<div style="margin-top:40px; padding:16px; font-size:12px; opacity:0.8; text-align:center;">
-  <strong>Om appen</strong><br>
-  All data sparas endast lokalt på din telefon.<br>
-  Byter du telefon eller rensar data kan informationen försvinna.<br>
-  Exportera och spara filer regelbundet för säkerhetskopia.
-</div>
-
-
 <script>
   // PWA: registrera service worker (kräver https, t.ex. GitHub Pages)
   if ("serviceWorker" in navigator) {
@@ -2970,6 +2993,108 @@ if(typeof _origRender === "function"){
       navigator.serviceWorker.register("./sw.js").catch(()=>{});
     });
   }
+</script>
+
+
+<!-- PWA Installationsruta (visas bara när webbläsaren tillåter installation) -->
+<div id="pwa-install-backdrop" class="pwa-install-backdrop" aria-hidden="true">
+  <div class="pwa-install-modal" role="dialog" aria-modal="true" aria-labelledby="pwa-install-title">
+    <div class="pwa-install-header">
+      <div id="pwa-install-title" class="pwa-install-title">Installera ALVIS Växtkoll?</div>
+      <button type="button" class="pwa-install-x" id="pwa-install-close" aria-label="Stäng">×</button>
+    </div>
+    <div class="pwa-install-body">
+      Du kan installera appen på hemskärmen för snabb åtkomst.
+    </div>
+    <div class="pwa-install-actions">
+      <button type="button" class="btn pwa-install-btn-secondary" id="pwa-install-later">Inte nu</button>
+      <button type="button" class="btn pwa-install-btn-primary" id="pwa-install-yes">Installera</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(() => {
+  // OBS: Webbläsaren bestämmer NÄR "beforeinstallprompt" triggas.
+  // Vi visar en egen popup när den väl triggas – typiskt vid första besöket efter att kriterierna är uppfyllda.
+
+  const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  if (isStandalone) return;
+
+  let deferredPrompt = null;
+
+  const backdrop = document.getElementById('pwa-install-backdrop');
+  const btnYes = document.getElementById('pwa-install-yes');
+  const btnLater = document.getElementById('pwa-install-later');
+  const btnClose = document.getElementById('pwa-install-close');
+
+  function showInstallModal(){
+    if (!backdrop) return;
+    backdrop.classList.add('show');
+    backdrop.setAttribute('aria-hidden','false');
+  }
+  function hideInstallModal(){
+    if (!backdrop) return;
+    backdrop.classList.remove('show');
+    backdrop.setAttribute('aria-hidden','true');
+  }
+
+  function markDismissed(){
+    try { localStorage.setItem('pwa_install_dismissed', String(Date.now())); } catch(e) {}
+  }
+
+  // Stäng om man trycker utanför rutan
+  if (backdrop){
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop){
+        hideInstallModal();
+        markDismissed();
+      }
+    });
+  }
+  if (btnClose){
+    btnClose.addEventListener('click', () => { hideInstallModal(); markDismissed(); });
+  }
+  if (btnLater){
+    btnLater.addEventListener('click', () => { hideInstallModal(); markDismissed(); });
+  }
+
+  if (btnYes){
+    btnYes.addEventListener('click', async () => {
+      if (!deferredPrompt) { hideInstallModal(); return; }
+      hideInstallModal();
+      try {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        // choice.outcome: "accepted" eller "dismissed"
+        if (choice && choice.outcome === 'dismissed') markDismissed();
+      } catch(e){}
+      deferredPrompt = null;
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Fånga eventet så vi kan visa vår egen knapp/popup
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // Visa bara om användaren inte nyligen har stängt rutan
+    let dismissedAt = 0;
+    try { dismissedAt = Number(localStorage.getItem('pwa_install_dismissed') || '0'); } catch(e) {}
+    const days7 = 7 * 24 * 60 * 60 * 1000;
+    if (dismissedAt && (Date.now() - dismissedAt) < days7) return;
+
+    // Visa direkt (första gången när kriterierna är uppfyllda)
+    showInstallModal();
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    try { localStorage.setItem('pwa_installed', '1'); } catch(e) {}
+    hideInstallModal();
+  });
+})();
 </script>
 
 </body>
