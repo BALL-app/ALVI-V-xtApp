@@ -1,0 +1,22 @@
+{
+  "name": "ALVIS Växtkoll",
+  "short_name": "Växtkoll",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0f3d2e",
+  "description": "Lokal växtkoll med bilder, vattningsintervall, PDF och export.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
